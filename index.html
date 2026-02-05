@@ -3,59 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zostaniesz moją Walentynką?</title>
+    <title>Dla Ciebie ❤️</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #ffe6e6;
+            min-height: 100vh;
+            background-color: #ffe6e6; /* Jasny różowy tł */
             font-family: 'Arial', sans-serif;
             flex-direction: column;
             text-align: center;
-            overflow: hidden;
+            overflow: hidden; /* Ukrywa paski przewijania */
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        h1 { color: #d32f2f; font-size: 2.5rem; margin-bottom: 20px; }
-        .img-container img { width: 200px; height: auto; border-radius: 15px; margin-bottom: 20px; }
-        .buttons { display: flex; gap: 20px; align-items: center; }
-        button { padding: 15px 30px; font-size: 1.2rem; border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; }
-        #yesBtn { background-color: #4CAF50; color: white; font-weight: bold; }
-        #noBtn { background-color: #f44336; color: white; }
-        #success-screen { display: none; }
+
+        /* Kontener na treść (miś, napisy) - zawsze na wierzchu */
+        .content {
+            position: relative;
+            z-index: 2; /* Wyższa warstwa */
+            margin-bottom: 30px;
+            pointer-events: none; /* Żeby kliknięcia przechodziły przez tekst, jeśli coś by go zasłoniło */
+        }
+
+        /* Pozwalamy klikać tylko w obrazek (opcjonalne) */
+        .content img {
+            pointer-events: auto;
+        }
+
+        /* Kontener na przyciski - pod spodem */
+        .buttons {
+            position: relative;
+            z-index: 1; /* Niższa warstwa */
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        /* Dodatkowy napis nad głównym pytaniem */
+        h2 {
+            color: #d32f2f;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 2.5rem;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            width: 200px;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            white-space: nowrap; /* Zapobiega łamaniu tekstu w przycisku */
+        }
+
+        #yesBtn {
+            background-color: #4CAF50; /* Zielony */
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        
+        #yesBtn:hover {
+             background-color: #45a049;
+        }
+
+        #noBtn {
+            background-color: #f44336; /* Czerwony */
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        
+        #noBtn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Ukryta sekcja na start */
+        #success-screen {
+            display: none;
+            z-index: 3; /* Najwyższa warstwa na koniec */
+        }
     </style>
 </head>
 <body>
+
     <div id="question-screen">
-        <div class="img-container">
-            <img src="https://media.tenor.com/f_rWjZ5dZ4oAAAAi/cute-bear.gif" alt="Cute bear">
+        <div class="content">
+            <div class="img-container">
+                <img src="https://media.tenor.com/f_rWjZ5dZ4oAAAAi/cute-bear.gif" alt="Cute bear">
+            </div>
+            <h2>Hej Kochanie! Mam pytanie... 👇</h2>
+            <h1>Zostaniesz moją Walentynką? 💖</h1>
         </div>
-        <h1>Zostaniesz moją Walentynką? 💖</h1>
+        
         <div class="buttons">
             <button id="yesBtn" onclick="accept()">Tak</button>
             <button id="noBtn" onclick="reject()">Nie</button>
         </div>
     </div>
+
     <div id="success-screen">
-        <div class="img-container">
-            <img src="https://media.tenor.com/J3iYqK3sQxYAAAAi/cute-bear-love.gif" alt="Happy bear">
+        <div class="content">
+             <div class="img-container">
+                <img src="https://media.tenor.com/J3iYqK3sQxYAAAAi/cute-bear-love.gif" alt="Happy bear">
+            </div>
+            <h1>Jej! Wiedziałem! Kocham Cię! 🥰</h1>
         </div>
-        <h1>Jej! Wiedziałem! Kocham Cię! 🥰</h1>
     </div>
+
     <script>
         let scale = 1;
-        const noTexts = ["Na pewno nie?", "Zastanów się...", "Złamiesz mi serce! 💔", "Będę płakać...", "Proszęęęęę!"];
+        const noTexts = [
+            "Na pewno nie?", 
+            "Zastanów się...", 
+            "Złamiesz mi serce! 💔", 
+            "Będę płakać...", 
+            "Obiecuję być grzeczny!", 
+            "Proszęęęęę!",
+            "To przycisk 'Nie' nie działa!",
+            "To jest niemożliwe!",
+            "Kliknij zielony! 💚"
+        ];
         let textIndex = 0;
+
         function reject() {
+            // Zwiększ przycisk TAK
             scale += 0.5; 
-            document.getElementById("yesBtn").style.transform = `scale(${scale})`;
+            const yesBtn = document.getElementById("yesBtn");
+            yesBtn.style.transform = `scale(${scale})`;
+
+            // Zmień tekst na przycisku NIE
             const noBtn = document.getElementById("noBtn");
             noBtn.innerText = noTexts[textIndex];
+            
+            // Przejdź do kolejnego tekstu (i zapętl jak się skończą)
             textIndex = (textIndex + 1) % noTexts.length;
         }
+
         function accept() {
+            // Ukryj pytanie, pokaż sukces
             document.getElementById("question-screen").style.display = "none";
             document.getElementById("success-screen").style.display = "block";
+            
+            // Reset stylu body, żeby ewentualne konfetti było widoczne
+            document.body.style.overflow = 'visible'; 
         }
     </script>
 </body>
